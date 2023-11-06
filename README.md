@@ -75,10 +75,19 @@ The RetrofitClient object is a singleton that initializes a Retrofit instance.
 
 Here's a walkthrough of implemented user stories:
 
+1. Empty search error messages and unknown movie error messages for clicking each button/link (search, view on IMDb, and share).
 
 
+2. Accurate search functionality.
 
 
+3. View on IMDb. (Note the Internet is really bad so IMDb does not load fully, but this does show that the link works and navigates the user to IMDb correctly).
+
+
+4. Share button functionality.
+
+
+5. Feedback icon functionality.
 
 
 ## Notes
