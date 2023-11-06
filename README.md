@@ -75,10 +75,24 @@ The RetrofitClient object is a singleton that initializes a Retrofit instance.
 
 Here's a walkthrough of implemented user stories:
 
+1. Empty search error messages and unknown movie error messages for clicking each button/link (search, view on IMDb, and share).
+![studio64_lDlegZIyIo](https://github.com/evan2mak/MovieSearch/assets/128643914/7bde39ac-fc72-4ddd-9ac7-9c79ed57351e)
 
 
+2. Accurate search functionality.
+![studio64_5aBTxbBc9x](https://github.com/evan2mak/MovieSearch/assets/128643914/766b666b-fdcb-4ef7-bde3-ca593f3946c2)
 
 
+3. View on IMDb. (Note the Internet is really bad so IMDb does not load fully, but this does show that the link works and navigates the user to IMDb correctly).
+![studio64_MEbckQhXd1](https://github.com/evan2mak/MovieSearch/assets/128643914/c885080a-7cee-4b0b-8378-7679ac17d87c)
+
+
+4. Share button functionality.
+![studio64_y6qSKdnkzX](https://github.com/evan2mak/MovieSearch/assets/128643914/dd41204f-78b4-43d7-a3c0-cfcf0e8adbc6)
+
+
+5. Feedback icon functionality.
+![studio64_VPoUNtGRHs](https://github.com/evan2mak/MovieSearch/assets/128643914/70b39129-0008-42f1-b279-f25492812fe5)
 
 
 ## Notes
