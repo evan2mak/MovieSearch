@@ -19,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
+// MainActivity handles UI interactions and movie search functionality
 class MainActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var omDbApiService: OMDbApiService
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         retrofit = RetrofitClient.retrofit
         omDbApiService = retrofit.create(OMDbApiService::class.java)
 
+        // Set the onClickListener for the search button
         val buttonSearch: Button = findViewById(R.id.buttonSearch)
         buttonSearch.setOnClickListener {
             val editTextMovieTitle: EditText = findViewById(R.id.editTextMovieTitle)
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             } ?: Toast.makeText(this@MainActivity, "No movie to view on IMDb.", Toast.LENGTH_LONG).show()
         }
 
+        // Set the onClickListener for the share button
         buttonShare.setOnClickListener {
             currentMovie?.let {
                 val shareIntent = Intent().apply {
@@ -71,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Search for a movie using the OMDb API
     private fun searchMovie(title: String) {
         omDbApiService.searchMovie("b108cd00", title).enqueue(object :
             Callback<MovieResponse> {
@@ -93,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
+    // Update the UI with movie details
     @SuppressLint("SetTextI18n")
     private fun updateUI(movie: MovieResponse) {
         currentMovie = movie
@@ -116,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         textViewIMDbRating.text = "IMDb Rating: ${movie.imdbRating}"
     }
 
+    // Clear all movie details from the UI
     @SuppressLint("SetTextI18n")
     private fun clearUI() {
         currentMovie = null
@@ -128,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         val textViewIMDbRating: TextView = findViewById(R.id.textViewIMDbRating)
 
         // Clear the data from the views
-        imageViewPoster.setImageDrawable(null) // This will remove the current image from the ImageView
+        imageViewPoster.setImageDrawable(null)
         textViewTitle.text = ""
         textViewYear.text = ""
         textViewRating.text = ""
@@ -137,11 +142,13 @@ class MainActivity : AppCompatActivity() {
         textViewIMDbRating.text = ""
     }
 
+    // Inflate the menu; this adds items to the action bar if it is present
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
+    // Handles action bar item clicks for feedback
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_feedback -> {
@@ -152,6 +159,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Opens email client to send feedback
     private fun sendFeedback() {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822"

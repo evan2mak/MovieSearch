@@ -2,6 +2,7 @@ package evtomak.iu.edu.moviesearch
 
 import com.google.gson.annotations.SerializedName
 
+// Data class representing a movie's details along with the API response status and any error messages received from the OMDb API
 data class MovieResponse(
     @SerializedName("Title") val title: String?,
     @SerializedName("Year") val year: String?,
