@@ -51,6 +51,10 @@ sendFeedback:
 
 The sendFeedback method opens the email client to send feedback to the creator.
 
+fetchMovieDetails:
+
+The fetchMovieDetails method is for fetching detailed information about each movie.
+
 ## MovieAdapter
 
 MovieAdapter is a recycler view adapter class that binds movie data to a list and handles view creation and binding for a movie list UI.
@@ -75,6 +79,10 @@ bind:
 
 Binds movie details to the views and sets click listeners for actions such as viewing on IMDb or sharing
 
+updateMovieDetails:
+
+Updates individual movie details.
+
 ## MovieListResponse
 
 MovieListResponse is a data class representing the response from a movie search query, including a list of movies, total results, and status of the response.
@@ -96,11 +104,11 @@ The RetrofitClient object is a singleton that initializes a Retrofit instance.
 Here's a walkthrough of implemented user stories:
 
 1. Empty search error message and unknown movie error message.
-![studio64_lDlegZIyIo](https://github.com/evan2mak/MovieSearch/assets/128643914/7bde39ac-fc72-4ddd-9ac7-9c79ed57351e)
+
 
 
 2. Accurate search functionality.
-![studio64_5aBTxbBc9x](https://github.com/evan2mak/MovieSearch/assets/128643914/766b666b-fdcb-4ef7-bde3-ca593f3946c2)
+
 
 
 3. View on IMDb. (Note the Internet is really bad so IMDb does not load fully, but this does show that the link works and navigates the user to IMDb correctly).
