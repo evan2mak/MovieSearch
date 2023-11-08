@@ -117,7 +117,7 @@ Here's a walkthrough of implemented user stories:
 
 ## Notes
 
-The biggest challenge I encountered was integrating the OMDb API into my app. I also had some trouble with retrieving information from IMDb, such as running time, genre, and IMDb rating. However, it sounds like this is a common issue, so I decided not to spend additional time on it. I also had some trouble listing all of the movies using recycler view.
+The biggest challenge I encountered was integrating the OMDb API into my app. I also had some trouble with retrieving information from IMDb, such as running time, genre, and IMDb rating. 
 
 ## License
 
