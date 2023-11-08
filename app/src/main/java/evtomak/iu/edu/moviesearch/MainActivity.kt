@@ -13,6 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,125 +25,65 @@ import retrofit2.Retrofit
 class MainActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var omDbApiService: OMDbApiService
-    private var currentMovie: MovieResponse? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var movieAdapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize the Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar1)
         setSupportActionBar(toolbar)
 
-        // Initialize Retrofit
         retrofit = RetrofitClient.retrofit
         omDbApiService = retrofit.create(OMDbApiService::class.java)
 
-        // Set the onClickListener for the search button
+        recyclerView = findViewById(R.id.recyclerViewMovies)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         val buttonSearch: Button = findViewById(R.id.buttonSearch)
         buttonSearch.setOnClickListener {
             val editTextMovieTitle: EditText = findViewById(R.id.editTextMovieTitle)
             val title = editTextMovieTitle.text.toString().trim()
             if (title.isEmpty()) {
-                Toast.makeText(this@MainActivity, "Empty search. Type in a movie title.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Empty search. Type in a movie title.", Toast.LENGTH_LONG).show()
             }
             else {
                 searchMovie(title)
             }
         }
-
-        // Initialize IMDb link and share button but with no setOnClickListener
-        val textViewImdbLink: TextView = findViewById(R.id.textViewImdbLink)
-        val buttonShare: Button = findViewById(R.id.buttonShare)
-
-        textViewImdbLink.setOnClickListener {
-            currentMovie?.let {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.imdb.com/title/${it.imdbID}"))
-                startActivity(intent)
-            } ?: Toast.makeText(this@MainActivity, "No movie to view on IMDb.", Toast.LENGTH_LONG).show()
-        }
-
-        // Set the onClickListener for the share button
-        buttonShare.setOnClickListener {
-            currentMovie?.let {
-                val shareIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, "${it.title} - https://www.imdb.com/title/${it.imdbID}")
-                    type = "text/plain"
-                }
-                startActivity(Intent.createChooser(shareIntent, "Share via"))
-            } ?: Toast.makeText(this@MainActivity, "Nothing to share. Search for an existing movie first.", Toast.LENGTH_LONG).show()
-        }
     }
 
     // Search for a movie using the OMDb API
     private fun searchMovie(title: String) {
-        omDbApiService.searchMovie("b108cd00", title).enqueue(object :
-            Callback<MovieResponse> {
-            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
-                val movieResponse = response.body()
-                // Check if the response body is not null and if the response from the OMDb API indicates success
-                if (movieResponse != null && response.isSuccessful && movieResponse.response != "False") {
-                    updateUI(movieResponse)
-                    if(currentMovie?.title == null){
-                        val errorMessage = movieResponse?.error ?: "No movie found or error in fetching data."
-                        Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_LONG).show()
-                        clearUI()
+        omDbApiService.searchMovies("b108cd00", title).enqueue(object :
+            Callback<MovieListResponse> {
+            override fun onResponse(
+                call: Call<MovieListResponse>,
+                response: Response<MovieListResponse>
+            ) {
+                val moviesResponse = response.body()
+                if (moviesResponse != null && response.isSuccessful && moviesResponse.response != "False") {
+                    movieAdapter = MovieAdapter(moviesResponse.search ?: listOf())
+                    recyclerView.adapter = movieAdapter
+
+                    // Fetch details for each movie
+                    for (movie in moviesResponse.search ?: emptyList()) {
+                        fetchMovieDetails(movie.imdbID ?: "")
                     }
+                }
+                else {
+                    val errorMessage =
+                        moviesResponse?.error ?: "No movies found or error in fetching data."
+                    Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_LONG).show()
                 }
             }
 
-            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
+            override fun onFailure(call: Call<MovieListResponse>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
-
-    // Update the UI with movie details
-    @SuppressLint("SetTextI18n")
-    private fun updateUI(movie: MovieResponse) {
-        currentMovie = movie
-        // Get references to the UI elements
-        val imageViewPoster: ImageView = findViewById(R.id.imageViewPoster)
-        val textViewTitle: TextView = findViewById(R.id.textViewTitle)
-        val textViewYear: TextView = findViewById(R.id.textViewYear)
-        val textViewRating: TextView = findViewById(R.id.textViewRating)
-        val textViewRuntime: TextView = findViewById(R.id.textViewRuntime)
-        val textViewGenre: TextView = findViewById(R.id.textViewGenre)
-        val textViewIMDbRating: TextView = findViewById(R.id.textViewIMDbRating)
-
-        // Set the data to the views
-        Glide.with(this).load(movie.poster).into(imageViewPoster)
-        textViewTitle.text = "Title: ${movie.title}"
-        textViewYear.text = "Year: ${movie.year}"
-        textViewRating.text = "Rated: ${movie.rated}"
-        textViewRuntime.text = "Runtime: ${movie.runtime}"
-        textViewGenre.text = "Genre: ${movie.genre}"
-        textViewIMDbRating.text = "IMDb Rating: ${movie.imdbRating}"
-    }
-
-    // Clear all movie details from the UI
-    @SuppressLint("SetTextI18n")
-    private fun clearUI() {
-        currentMovie = null
-        val imageViewPoster: ImageView = findViewById(R.id.imageViewPoster)
-        val textViewTitle: TextView = findViewById(R.id.textViewTitle)
-        val textViewYear: TextView = findViewById(R.id.textViewYear)
-        val textViewRating: TextView = findViewById(R.id.textViewRating)
-        val textViewRuntime: TextView = findViewById(R.id.textViewRuntime)
-        val textViewGenre: TextView = findViewById(R.id.textViewGenre)
-        val textViewIMDbRating: TextView = findViewById(R.id.textViewIMDbRating)
-
-        // Clear the data from the views
-        imageViewPoster.setImageDrawable(null)
-        textViewTitle.text = ""
-        textViewYear.text = ""
-        textViewRating.text = ""
-        textViewRuntime.text = ""
-        textViewGenre.text = ""
-        textViewIMDbRating.text = ""
-    }
-
     // Inflate the menu; this adds items to the action bar if it is present
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -172,6 +114,24 @@ class MainActivity : AppCompatActivity() {
         else {
             Toast.makeText(this, "No email clients installed.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // This method is for fetching detailed information about each movie
+    private fun fetchMovieDetails(movieId: String) {
+        omDbApiService.getMovieDetails("b108cd00", movieId).enqueue(object : Callback<MovieResponse> {
+            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
+                val movieDetail = response.body()
+                if (movieDetail != null) {
+                    // Update the movie details in the adapter
+                    movieAdapter.updateMovieDetails(movieId, movieDetail)
+                }
+            }
+
+            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
+                // Handle the failure case
+                Toast.makeText(this@MainActivity, "Failed to fetch movie details for $movieId", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }
 
