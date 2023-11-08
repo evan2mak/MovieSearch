@@ -1,7 +1,7 @@
 # C323 Project 8 - Movie Search: Evan Tomak
 
-This app allows the user to search for a movie that exists on IMDb using the OMDb API. Upon searching, the user will be able to see the movie title, movie poster, release year, rating (PG, PG-13, etc.), runtime, genre, and IMDb rating (0-10).
-This app also allows the user to leave feedback via email, view the movie in more detail on IMDb, and also share the movie title and IMDb link via email.
+This app allows the user to search for movies that exist on IMDb using the OMDb API. Upon searching, the user will be able to see a list of movies that each display their respective movie title, movie poster, release year, rating (PG, PG-13, etc.), runtime, genre, and IMDb rating (0-10).
+This app also allows the user to leave feedback via email, view a movie in more detail on IMDb, and also share a movie title and IMDb link via email.
 
 The functionality is described in more detail below:
 
@@ -11,15 +11,15 @@ The functionality is described in more detail below:
 
 [X] There is also a searchbar, search button, 'View on IMDb' link, and a share button.
 
-[X] If the searchbar is empty and the user tries to search, view on IMDb, or share, appropriate error messages will be shown indicating the user must first search for a movie.
+[X] If the searchbar is empty and the user tries to search, an appropriate error message will be shown indicating the user must first search for a movie.
 
-[X] If there is not a movie that exists on IMDb, similarly an appropriate error message will be thrown for each of the above scenarios.
+[X] If there is not a movie or movies that exist on IMDb, similarly an appropriate error message will be shown.
 
-[X] If a movie exists on IMDb, the user will be able to see the movie title, movie poster, release year, rating (PG, PG-13, etc.), runtime, genre, and IMDb rating (0-10) after clicking the 'Search' button.
+[X] If there are movies on IMDb that contain the keyword from the search, the user will be able to see a list of all the movies that contain the keyword, including the movie title, movie poster, release year, rating (PG, PG-13, etc.), runtime, genre, and IMDb rating (0-10) -- (after clicking the 'Search' button).
 
-[X] The user can also click the 'View on IMDb' link in bold italics to view the movie in more detail on the IMDb website.
+[X] The user can also click the 'View on IMDb' link in bold italics to view a movie in more detail on the IMDb website.
 
-[X] The user can also click the 'Share' button to share the movie title and IMDb link via email.
+[X] The user can also click the 'Share' button to share a movie title and IMDb link via email.
 
 [X] The user can also click the feedback icon on the top right corner of the toolbar to send a feedback email to the creator of the app -- that's me! :) -- The email subject line will automatically be populated with 'Feedback' and the email will be addressed to my email address.
 
@@ -33,19 +33,11 @@ MainActivity handles UI interactions and movie search functionality.
 
 onCreate:
 
-The onCreate method is responsible for initializing the toolbar and Retrofit client and setting click listeners for the search button, the IMDb link, and the share button. 
+The onCreate method is responsible for initializing the toolbar, recyler view, and Retrofit client, and for setting a click listener for the search button. 
 
 searchMovie:
 
-The searchMovie method searches for a movie using the OMDb API.
-
-updateUI:
-
-The updateUI method updates the UI with the movie details.
-
-clearUI:
-
-The clearUI method clears the movie details from the UI.
+The searchMovie method searches for all movies containing a keyword using the OMDb API.
 
 onCreateOptionsMenu:
 
@@ -58,6 +50,42 @@ The onOptionsItemSelected method handles the action bar item clicks for the feed
 sendFeedback:
 
 The sendFeedback method opens the email client to send feedback to the creator.
+
+fetchMovieDetails:
+
+The fetchMovieDetails method is for fetching detailed information about each movie.
+
+## MovieAdapter
+
+MovieAdapter is a recycler view adapter class that binds movie data to a list and handles view creation and binding for a movie list UI.
+
+onCreateViewHolder:
+
+Inflates the movie item layout and returns a new view holder for the RecyclerView
+
+onBindViewHolder:
+
+Binds movie data to the view holder at the specified position in the RecyclerView.
+
+getItemCount:
+
+Returns the total number of items in the movie list data set.
+
+MovieViewHolder:
+
+ViewHolder class that contains and binds views for individual movie items in the RecyclerView.
+
+bind:
+
+Binds movie details to the views and sets click listeners for actions such as viewing on IMDb or sharing
+
+updateMovieDetails:
+
+Updates individual movie details.
+
+## MovieListResponse
+
+MovieListResponse is a data class representing the response from a movie search query, including a list of movies, total results, and status of the response.
 
 ## MovieResponse
 
@@ -75,12 +103,12 @@ The RetrofitClient object is a singleton that initializes a Retrofit instance.
 
 Here's a walkthrough of implemented user stories:
 
-1. Empty search error messages and unknown movie error messages for clicking each button/link (search, view on IMDb, and share).
-![studio64_lDlegZIyIo](https://github.com/evan2mak/MovieSearch/assets/128643914/7bde39ac-fc72-4ddd-9ac7-9c79ed57351e)
+1. Empty search error message and unknown movie error message.
+
 
 
 2. Accurate search functionality.
-![studio64_5aBTxbBc9x](https://github.com/evan2mak/MovieSearch/assets/128643914/766b666b-fdcb-4ef7-bde3-ca593f3946c2)
+
 
 
 3. View on IMDb. (Note the Internet is really bad so IMDb does not load fully, but this does show that the link works and navigates the user to IMDb correctly).
@@ -97,7 +125,7 @@ Here's a walkthrough of implemented user stories:
 
 ## Notes
 
-The biggest challenge I encountered was integrating the OMDb API into my app. I also had some trouble with updating the UI and clearing the UI with subsequent searches, so I found it was much easier to handle these situations in separate functions. 
+The biggest challenge I encountered was integrating the OMDb API into my app. I also had some trouble with retrieving information from IMDb, such as running time, genre, and IMDb rating. 
 
 ## License
 
